@@ -6,6 +6,7 @@ import {
   type FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '../app/store'
+import type { Notification } from './types'
 
 export interface SendMessageResponse {
   idMessage: string
@@ -51,6 +52,10 @@ export const greenApi = createApi({
   endpoints: (build) => ({
     sendMessage: build.mutation<SendMessageResponse, SendMessageArgs>({
       query: (body) => ({ apiMethod: 'sendMessage', method: 'POST', body }),
+    }),
+    receiveNotification: build.query<Notification | null, void>({
+      query: () => ({ apiMethod: 'receiveNotification', params: { receiveTimeout: 5 } }),
+      keepUnusedDataFor: 0,
     }),
   }),
 })
