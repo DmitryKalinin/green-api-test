@@ -5,8 +5,6 @@
 Веб-интерфейс для отправки и получения текстовых сообщений в мессенджере MAX
 через [GREEN-API](https://green-api.com/max). Внешний вид — по мотивам [web.max.ru](https://web.max.ru/).
 
-Тестовое задание на позицию «Фронтенд разработчик React» — [текст задания](docs/TASK.md).
-
 ## Для проверяющего
 
 - [docs/REVIEW.md](docs/REVIEW.md) — требования → код → проверка, сценарий проверки за 5 минут.
@@ -67,16 +65,6 @@ npm run preview # просмотр сборки
 npm test        # unit-тесты
 npm run lint    # ESLint
 ```
-
-## Деплой на GitHub Pages
-
-В репозитории есть workflow `.github/workflows/deploy.yml`: при пуше в `main` он запускает
-линтер, тесты, собирает проект и публикует `dist/` на GitHub Pages.
-
-Один раз нужно включить Pages: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-После этого сайт будет доступен по адресу `https://<username>.github.io/<repo>/`.
-
-В `vite.config.ts` задан `base: './'`, поэтому сборка работает из подпапки без дополнительной настройки.
 
 ## Настройка инстанса GREEN-API
 
