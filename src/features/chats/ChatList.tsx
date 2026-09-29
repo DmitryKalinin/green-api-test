@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { formatPhone } from '../../utils/phone'
 import { chatSelected } from './chatsSlice'
 import styles from './ChatList.module.css'
 
@@ -19,7 +20,7 @@ export function ChatList() {
           className={chat.id === activeChatId ? `${styles.item} ${styles.active}` : styles.item}
           onClick={() => dispatch(chatSelected(chat.id))}
         >
-          {chat.name}
+          {formatPhone(chat.name)}
         </li>
       ))}
     </ul>

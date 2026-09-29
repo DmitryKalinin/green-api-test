@@ -1,8 +1,14 @@
 .form {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
   padding: 8px 12px;
   border-bottom: 1px solid #ddd;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
 }
 
 .input {
@@ -21,4 +27,9 @@
   color: #fff;
   font-size: 20px;
   cursor: pointer;
+}
+
+.error {
+  font-size: 12px;
+  color: #e64646;
 }
