@@ -1,5 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { logout } from '../auth/authSlice'
+import { ChatList } from './ChatList'
+import { NewChatForm } from './NewChatForm'
 import styles from './Sidebar.module.css'
 
 export function Sidebar() {
@@ -12,9 +14,9 @@ export function Sidebar() {
         <span>Чаты</span>
         <button onClick={() => dispatch(logout())}>Выйти</button>
       </header>
+      <NewChatForm />
       <div className={styles.list}>
-        {/* TODO: список чатов */}
-        <p className={styles.empty}>Нет чатов</p>
+        <ChatList />
       </div>
       <footer className={styles.footer}>Инстанс {idInstance}</footer>
     </>

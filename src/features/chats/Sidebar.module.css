@@ -12,11 +12,6 @@
   overflow-y: auto;
 }
 
-.empty {
-  text-align: center;
-  color: #999;
-}
-
 .footer {
   padding: 8px 16px;
   font-size: 12px;

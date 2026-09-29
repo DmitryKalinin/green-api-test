@@ -1,0 +1,24 @@
+.form {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.button {
+  width: 36px;
+  border: none;
+  border-radius: 8px;
+  background: #3f8ae0;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
