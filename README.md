@@ -1,9 +1,19 @@
 # MAX Chat
 
+[![CI / Deploy](https://github.com/DmitryKalinin/green-api-test/actions/workflows/deploy.yml/badge.svg)](https://github.com/DmitryKalinin/green-api-test/actions/workflows/deploy.yml)
+
 Веб-интерфейс для отправки и получения текстовых сообщений в мессенджере MAX
 через [GREEN-API](https://green-api.com/max). Внешний вид — по мотивам [web.max.ru](https://web.max.ru/).
 
-Тестовое задание на позицию «Фронтенд разработчик React».
+Тестовое задание на позицию «Фронтенд разработчик React» — [текст задания](docs/TASK.md).
+
+## Для проверяющего
+
+- [docs/REVIEW.md](docs/REVIEW.md) — требования → код → проверка, сценарий проверки за 5 минут.
+- [AGENTS.md](AGENTS.md) — контекст для AI-агентов: команды, карта кода, инварианты.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — решения и компромиссы, схема потока данных.
+- [docs/GREEN_API.md](docs/GREEN_API.md) — какие методы и уведомления GREEN-API используются.
+- [docs/AI_WORKFLOW.md](docs/AI_WORKFLOW.md) — как проект разрабатывался вместе с Claude Code.
 
 ## Возможности
 
@@ -26,9 +36,9 @@ React 19, TypeScript, Redux Toolkit + RTK Query, CSS Modules, Vite, Vitest, ESLi
 Нужен Node.js 20+.
 
 ```bash
-git clone <repo-url>
-cd max-chat
-npm install
+git clone https://github.com/DmitryKalinin/green-api-test.git
+cd green-api-test
+npm ci
 npm run dev
 ```
 
@@ -66,14 +76,9 @@ npm run lint    # ESLint
 
 ## Как это работает
 
-- `src/api/greenApi.ts` — RTK Query API. URL запроса собирается из данных инстанса в сторе:
-  `{apiUrl}/waInstance{idInstance}/{method}/{apiTokenInstance}`.
-- `src/hooks/useNotificationPolling.ts` — цикл получения уведомлений. `receiveNotification`
-  работает как long polling (`receiveTimeout=5`), поэтому следующий запрос отправляется
-  только после обработки и удаления предыдущего уведомления.
-- `src/utils/parseNotification.ts` — достаёт текст из `textMessage` / `extendedTextMessage`,
-  остальные типы уведомлений игнорируются.
-- `src/features/chats/chatsSlice.ts` — чаты и сообщения, дедупликация по `idMessage`.
+Кратко: RTK Query собирает URL GREEN-API из данных инстанса в сторе, входящие получаются
+последовательным long polling (`receiveNotification` → обработка → `deleteNotification`).
+Подробности и обоснования — в [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Ограничения
 
