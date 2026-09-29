@@ -57,6 +57,13 @@ export const greenApi = createApi({
       query: () => ({ apiMethod: 'receiveNotification', params: { receiveTimeout: 5 } }),
       keepUnusedDataFor: 0,
     }),
+    deleteNotification: build.mutation<{ result: boolean }, number>({
+      query: (receiptId) => ({
+        apiMethod: 'deleteNotification',
+        path: String(receiptId),
+        method: 'DELETE',
+      }),
+    }),
   }),
 })
 

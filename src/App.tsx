@@ -25,7 +25,7 @@ function App() {
       )
       if (!data) return
 
-      const { body } = data
+      const { receiptId, body } = data
       if (body.typeWebhook === 'incomingMessageReceived') {
         dispatch(
           messageAdded({
@@ -37,6 +37,9 @@ function App() {
           }),
         )
       }
+
+      // без удаления GREEN-API будет отдавать это же уведомление снова и снова
+      await dispatch(greenApi.endpoints.deleteNotification.initiate(receiptId))
     }, POLLING_INTERVAL)
 
     return () => clearInterval(timer)
