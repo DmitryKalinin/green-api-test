@@ -36,7 +36,10 @@ const chatsSlice = createSlice({
       if (!state.messages[message.chatId]) {
         state.messages[message.chatId] = []
       }
-      state.messages[message.chatId].push(message)
+      const list = state.messages[message.chatId]
+      // одно и то же уведомление может прийти повторно, если не успели его удалить
+      if (list.some((m) => m.id === message.id)) return
+      list.push(message)
     },
   },
 })
