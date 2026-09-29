@@ -45,13 +45,23 @@ export function useNotificationPolling(enabled: boolean) {
         }
         if (!data) continue
 
-        const message = parseNotification(data)
-        if (message) {
-          dispatch(messageAdded(message))
+        try {
+          const message = parseNotification(data)
+          if (message) {
+            dispatch(messageAdded(message))
+          }
+        } catch (e) {
+          // неожиданный формат уведомления не должен останавливать цикл
+          console.error('Failed to handle notification', data, e)
         }
 
         // без удаления GREEN-API будет отдавать это же уведомление снова и снова
-        await dispatch(greenApi.endpoints.deleteNotification.initiate(data.receiptId))
+        const deleted = await dispatch(
+          greenApi.endpoints.deleteNotification.initiate(data.receiptId),
+        )
+        if ('error' in deleted) {
+          await delay(ERROR_DELAY)
+        }
       }
     }
 

@@ -29,8 +29,12 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(greenApi.middleware),
 })
 
+// сохраняем только когда поменялись auth или chats, а не на каждый экшен RTK Query
+let saved = { auth: store.getState().auth, chats: store.getState().chats }
 store.subscribe(() => {
   const { auth, chats } = store.getState()
+  if (auth === saved.auth && chats === saved.chats) return
+  saved = { auth, chats }
   if (auth.credentials) {
     saveState({ auth, chats })
   }
