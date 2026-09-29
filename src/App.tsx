@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import { useAppSelector } from './app/hooks'
 import { LoginPage } from './features/auth/LoginPage'
-import type { Credentials } from './types'
 
 function App() {
-  const [credentials, setCredentials] = useState<Credentials | null>(null)
+  const credentials = useAppSelector((state) => state.auth.credentials)
 
   if (!credentials) {
-    return <LoginPage onLogin={setCredentials} />
+    return <LoginPage />
   }
 
   // TODO: чат

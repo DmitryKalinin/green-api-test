@@ -1,25 +1,25 @@
 import { useState, type FormEvent } from 'react'
-import type { Credentials } from '../../types'
+import { useAppDispatch } from '../../app/hooks'
+import { login } from './authSlice'
 import styles from './LoginPage.module.css'
 
 const DEFAULT_API_URL = 'https://api.green-api.com/v3'
 
-interface Props {
-  onLogin: (credentials: Credentials) => void
-}
-
-export function LoginPage({ onLogin }: Props) {
+export function LoginPage() {
+  const dispatch = useAppDispatch()
   const [apiUrl, setApiUrl] = useState(DEFAULT_API_URL)
   const [idInstance, setIdInstance] = useState('')
   const [apiTokenInstance, setApiTokenInstance] = useState('')
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    onLogin({
-      apiUrl: apiUrl.trim().replace(/\/$/, ''),
-      idInstance: idInstance.trim(),
-      apiTokenInstance: apiTokenInstance.trim(),
-    })
+    dispatch(
+      login({
+        apiUrl: apiUrl.trim().replace(/\/$/, ''),
+        idInstance: idInstance.trim(),
+        apiTokenInstance: apiTokenInstance.trim(),
+      }),
+    )
   }
 
   return (
