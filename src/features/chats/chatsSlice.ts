@@ -19,12 +19,14 @@ const chatsSlice = createSlice({
   reducers: {
     chatCreated(state, action: PayloadAction<string>) {
       const phone = action.payload
-      const exists = state.chats.some((chat) => chat.id === phone)
+      // GREEN-API ждёт chatId в формате 79991234567@c.us
+      const chatId = `${phone}@c.us`
+      const exists = state.chats.some((chat) => chat.id === chatId)
       if (!exists) {
-        state.chats.unshift({ id: phone, name: phone })
-        state.messages[phone] = []
+        state.chats.unshift({ id: chatId, name: phone })
+        state.messages[chatId] = []
       }
-      state.activeChatId = phone
+      state.activeChatId = chatId
     },
     chatSelected(state, action: PayloadAction<string>) {
       state.activeChatId = action.payload
