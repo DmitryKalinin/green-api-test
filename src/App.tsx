@@ -1,15 +1,21 @@
 import { useAppSelector } from './app/hooks'
+import { Layout } from './components/Layout'
 import { LoginPage } from './features/auth/LoginPage'
+import { ChatWindow } from './features/chat/ChatWindow'
+import { Sidebar } from './features/chats/Sidebar'
 
 function App() {
-  const credentials = useAppSelector((state) => state.auth.credentials)
+  const isAuthorized = useAppSelector((state) => state.auth.credentials !== null)
 
-  if (!credentials) {
+  if (!isAuthorized) {
     return <LoginPage />
   }
 
-  // TODO: чат
-  return <div>Инстанс {credentials.idInstance}</div>
+  return (
+    <Layout sidebar={<Sidebar />}>
+      <ChatWindow />
+    </Layout>
+  )
 }
 
 export default App
