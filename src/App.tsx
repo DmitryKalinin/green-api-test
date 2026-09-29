@@ -6,6 +6,7 @@ import { LoginPage } from './features/auth/LoginPage'
 import { ChatWindow } from './features/chat/ChatWindow'
 import { messageAdded } from './features/chats/chatsSlice'
 import { Sidebar } from './features/chats/Sidebar'
+import { parseNotification } from './utils/parseNotification'
 
 const ERROR_DELAY = 5000
 
@@ -45,21 +46,13 @@ function App() {
         }
         if (!data) continue
 
-        const { receiptId, body } = data
-        if (body.typeWebhook === 'incomingMessageReceived') {
-          dispatch(
-            messageAdded({
-              id: body.idMessage,
-              chatId: body.senderData.chatId,
-              text: body.messageData.textMessageData.textMessage,
-              timestamp: body.timestamp * 1000,
-              outgoing: false,
-            }),
-          )
+        const message = parseNotification(data)
+        if (message) {
+          dispatch(messageAdded(message))
         }
 
         // без удаления GREEN-API будет отдавать это же уведомление снова и снова
-        await dispatch(greenApi.endpoints.deleteNotification.initiate(receiptId))
+        await dispatch(greenApi.endpoints.deleteNotification.initiate(data.receiptId))
       }
     }
 

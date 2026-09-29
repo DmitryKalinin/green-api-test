@@ -5,8 +5,22 @@ export interface TextMessageData {
   }
 }
 
-export interface IncomingMessageBody {
-  typeWebhook: 'incomingMessageReceived'
+export interface ExtendedTextMessageData {
+  typeMessage: 'extendedTextMessage'
+  extendedTextMessageData: {
+    text: string
+  }
+}
+
+// остальные типы (картинки, файлы и т.д.) не поддерживаем
+export interface OtherMessageData {
+  typeMessage: string
+}
+
+export type MessageData = TextMessageData | ExtendedTextMessageData | OtherMessageData
+
+export interface MessageWebhookBody {
+  typeWebhook: 'incomingMessageReceived' | 'outgoingMessageReceived' | 'outgoingAPIMessageReceived'
   timestamp: number
   idMessage: string
   senderData: {
@@ -14,10 +28,14 @@ export interface IncomingMessageBody {
     sender: string
     senderName?: string
   }
-  messageData: TextMessageData
+  messageData: MessageData
+}
+
+export interface OtherWebhookBody {
+  typeWebhook: string
 }
 
 export interface Notification {
   receiptId: number
-  body: IncomingMessageBody
+  body: MessageWebhookBody | OtherWebhookBody
 }

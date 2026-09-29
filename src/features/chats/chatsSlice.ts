@@ -33,6 +33,10 @@ const chatsSlice = createSlice({
     },
     messageAdded(state, action: PayloadAction<Message>) {
       const message = action.payload
+      // написали с номера, для которого ещё нет чата — создаём его
+      if (!state.chats.some((chat) => chat.id === message.chatId)) {
+        state.chats.unshift({ id: message.chatId, name: message.chatId.replace('@c.us', '') })
+      }
       if (!state.messages[message.chatId]) {
         state.messages[message.chatId] = []
       }
