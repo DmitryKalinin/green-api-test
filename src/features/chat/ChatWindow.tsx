@@ -1,4 +1,4 @@
-import { sendMessage } from '../../api/greenApi'
+import { useSendMessageMutation } from '../../api/greenApi'
 import type { Message } from '../../types'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { messageAdded } from '../chats/chatsSlice'
@@ -10,7 +10,7 @@ const EMPTY: Message[] = []
 
 export function ChatWindow() {
   const dispatch = useAppDispatch()
-  const credentials = useAppSelector((state) => state.auth.credentials)
+  const [sendMessage] = useSendMessageMutation()
   const activeChat = useAppSelector((state) =>
     state.chats.chats.find((chat) => chat.id === state.chats.activeChatId),
   )
@@ -18,13 +18,16 @@ export function ChatWindow() {
     activeChat ? (state.chats.messages[activeChat.id] ?? EMPTY) : EMPTY,
   )
 
-  if (!activeChat || !credentials) {
+  if (!activeChat) {
     return <div className={styles.placeholder}>Выберите чат или создайте новый</div>
   }
 
   const handleSend = async (text: string) => {
     try {
-      const { idMessage } = await sendMessage(credentials, activeChat.id, text)
+      const { idMessage } = await sendMessage({
+        chatId: activeChat.id,
+        message: text,
+      }).unwrap()
       dispatch(
         messageAdded({
           id: idMessage,

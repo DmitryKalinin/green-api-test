@@ -1,27 +1,58 @@
-import type { Credentials } from '../types'
+import {
+  createApi,
+  fetchBaseQuery,
+  type BaseQueryFn,
+  type FetchArgs,
+  type FetchBaseQueryError,
+} from '@reduxjs/toolkit/query/react'
+import type { RootState } from '../app/store'
 
 export interface SendMessageResponse {
   idMessage: string
 }
 
-function buildUrl({ apiUrl, idInstance, apiTokenInstance }: Credentials, method: string) {
-  return `${apiUrl}/waInstance${idInstance}/${method}/${apiTokenInstance}`
+export interface SendMessageArgs {
+  chatId: string
+  message: string
 }
 
-export async function sendMessage(
-  credentials: Credentials,
-  chatId: string,
-  message: string,
-): Promise<SendMessageResponse> {
-  const res = await fetch(buildUrl(credentials, 'sendMessage'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chatId, message }),
-  })
+interface MethodArgs extends Omit<FetchArgs, 'url'> {
+  method?: string
+  apiMethod: string
+  path?: string
+}
 
-  if (!res.ok) {
-    throw new Error(`sendMessage failed: ${res.status}`)
+const rawBaseQuery = fetchBaseQuery()
+
+// URL у GREEN-API собирается из данных инстанса:
+// {apiUrl}/waInstance{idInstance}/{method}/{apiTokenInstance}
+const greenApiBaseQuery: BaseQueryFn<MethodArgs, unknown, FetchBaseQueryError> = async (
+  { apiMethod, path, ...args },
+  api,
+  extraOptions,
+) => {
+  const credentials = (api.getState() as RootState).auth.credentials
+  if (!credentials) {
+    return { error: { status: 'CUSTOM_ERROR', error: 'Not authorized' } }
   }
 
-  return res.json()
+  const { apiUrl, idInstance, apiTokenInstance } = credentials
+  let url = `${apiUrl}/waInstance${idInstance}/${apiMethod}/${apiTokenInstance}`
+  if (path) {
+    url += `/${path}`
+  }
+
+  return rawBaseQuery({ ...args, url }, api, extraOptions)
 }
+
+export const greenApi = createApi({
+  reducerPath: 'greenApi',
+  baseQuery: greenApiBaseQuery,
+  endpoints: (build) => ({
+    sendMessage: build.mutation<SendMessageResponse, SendMessageArgs>({
+      query: (body) => ({ apiMethod: 'sendMessage', method: 'POST', body }),
+    }),
+  }),
+})
+
+export const { useSendMessageMutation } = greenApi
