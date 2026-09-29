@@ -6,6 +6,7 @@ import {
   type FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '../app/store'
+import type { Credentials } from '../types'
 import type { Notification } from './types'
 
 export interface SendMessageResponse {
@@ -50,6 +51,18 @@ export const greenApi = createApi({
   reducerPath: 'greenApi',
   baseQuery: greenApiBaseQuery,
   endpoints: (build) => ({
+    getStateInstance: build.mutation<{ stateInstance: string }, Credentials>({
+      // вызывается до логина, поэтому данные инстанса передаём явно
+      queryFn: async ({ apiUrl, idInstance, apiTokenInstance }, api, extraOptions) => {
+        const result = await rawBaseQuery(
+          `${apiUrl}/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`,
+          api,
+          extraOptions,
+        )
+        if (result.error) return { error: result.error }
+        return { data: result.data as { stateInstance: string } }
+      },
+    }),
     sendMessage: build.mutation<SendMessageResponse, SendMessageArgs>({
       query: (body) => ({ apiMethod: 'sendMessage', method: 'POST', body }),
     }),
@@ -67,4 +80,4 @@ export const greenApi = createApi({
   }),
 })
 
-export const { useSendMessageMutation } = greenApi
+export const { useSendMessageMutation, useGetStateInstanceMutation } = greenApi

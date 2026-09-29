@@ -1,15 +1,19 @@
 .bubble {
-  max-width: 70%;
-  margin-bottom: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: #f0f0f0;
+  max-width: min(70%, 520px);
+  padding: 7px 12px 6px;
+  border-radius: var(--radius-bubble);
+  border-bottom-left-radius: 4px;
+  background: var(--color-bubble-in);
   align-self: flex-start;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+  line-height: 1.35;
 }
 
 .outgoing {
-  background: #d8e8fb;
+  background: var(--color-bubble-out);
   align-self: flex-end;
+  border-bottom-left-radius: var(--radius-bubble);
+  border-bottom-right-radius: 4px;
 }
 
 .text {
@@ -18,7 +22,14 @@
 }
 
 .time {
-  margin-left: 8px;
+  float: right;
+  margin: 6px 0 0 10px;
   font-size: 11px;
-  color: #999;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 700px) {
+  .bubble {
+    max-width: 85%;
+  }
 }

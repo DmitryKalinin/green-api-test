@@ -1,15 +1,39 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { greenApi } from '../api/greenApi'
-import authReducer from '../features/auth/authSlice'
+import authReducer, { logout } from '../features/auth/authSlice'
 import chatsReducer from '../features/chats/chatsSlice'
+import { clearState, loadState, saveState } from './persist'
+
+const appReducer = combineReducers({
+  auth: authReducer,
+  chats: chatsReducer,
+  [greenApi.reducerPath]: greenApi.reducer,
+})
+
+type AppState = ReturnType<typeof appReducer>
+
+// при выходе сбрасываем всё состояние, чтобы чаты одного инстанса не показались другому
+const rootReducer: typeof appReducer = (state, action) => {
+  if (logout.match(action)) {
+    clearState()
+    return appReducer(undefined, action)
+  }
+  return appReducer(state, action)
+}
+
+const persisted = loadState<Pick<AppState, 'auth' | 'chats'>>()
 
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    chats: chatsReducer,
-    [greenApi.reducerPath]: greenApi.reducer,
-  },
+  reducer: rootReducer,
+  preloadedState: persisted,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(greenApi.middleware),
+})
+
+store.subscribe(() => {
+  const { auth, chats } = store.getState()
+  if (auth.credentials) {
+    saveState({ auth, chats })
+  }
 })
 
 export type RootState = ReturnType<typeof store.getState>

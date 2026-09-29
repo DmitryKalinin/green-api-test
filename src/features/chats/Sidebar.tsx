@@ -12,7 +12,9 @@ export function Sidebar() {
     <>
       <header className={styles.header}>
         <span>Чаты</span>
-        <button onClick={() => dispatch(logout())}>Выйти</button>
+        <button className={styles.logout} onClick={() => dispatch(logout())}>
+          Выйти
+        </button>
       </header>
       <NewChatForm />
       <div className={styles.list}>

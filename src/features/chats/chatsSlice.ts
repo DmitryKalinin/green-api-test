@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Chat, Message } from '../../types'
 
-interface ChatsState {
+export interface ChatsState {
   chats: Chat[]
   messages: Record<string, Message[]>
   activeChatId: string | null
@@ -31,6 +31,9 @@ const chatsSlice = createSlice({
     chatSelected(state, action: PayloadAction<string>) {
       state.activeChatId = action.payload
     },
+    chatClosed(state) {
+      state.activeChatId = null
+    },
     messageAdded(state, action: PayloadAction<Message>) {
       const message = action.payload
       // написали с номера, для которого ещё нет чата — создаём его
@@ -48,5 +51,5 @@ const chatsSlice = createSlice({
   },
 })
 
-export const { chatCreated, chatSelected, messageAdded } = chatsSlice.actions
+export const { chatCreated, chatSelected, chatClosed, messageAdded } = chatsSlice.actions
 export default chatsSlice.reducer

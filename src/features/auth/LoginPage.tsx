@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { useGetStateInstanceMutation } from '../../api/greenApi'
 import { useAppDispatch } from '../../app/hooks'
 import { login } from './authSlice'
 import styles from './LoginPage.module.css'
@@ -10,16 +11,30 @@ export function LoginPage() {
   const [apiUrl, setApiUrl] = useState(DEFAULT_API_URL)
   const [idInstance, setIdInstance] = useState('')
   const [apiTokenInstance, setApiTokenInstance] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [getStateInstance, { isLoading }] = useGetStateInstanceMutation()
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    dispatch(
-      login({
-        apiUrl: apiUrl.trim().replace(/\/$/, ''),
-        idInstance: idInstance.trim(),
-        apiTokenInstance: apiTokenInstance.trim(),
-      }),
-    )
+    setError(null)
+
+    const credentials = {
+      apiUrl: apiUrl.trim().replace(/\/$/, ''),
+      idInstance: idInstance.trim(),
+      apiTokenInstance: apiTokenInstance.trim(),
+    }
+
+    // проверяем данные до входа, чтобы не пускать в чат с неверным токеном
+    try {
+      const { stateInstance } = await getStateInstance(credentials).unwrap()
+      if (stateInstance !== 'authorized') {
+        setError(`Инстанс не авторизован (состояние: ${stateInstance})`)
+        return
+      }
+      dispatch(login(credentials))
+    } catch {
+      setError('Не удалось подключиться. Проверьте idInstance, apiTokenInstance и apiUrl.')
+    }
   }
 
   return (
@@ -60,8 +75,10 @@ export function LoginPage() {
           />
         </label>
 
-        <button className={styles.button} type="submit">
-          Войти
+        {error && <p className={styles.error}>{error}</p>}
+
+        <button className={styles.button} type="submit" disabled={isLoading}>
+          {isLoading ? 'Проверяем…' : 'Войти'}
         </button>
       </form>
     </div>

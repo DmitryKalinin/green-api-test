@@ -15,6 +15,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 function App() {
   const dispatch = useAppDispatch()
   const isAuthorized = useAppSelector((state) => state.auth.credentials !== null)
+  const hasActiveChat = useAppSelector((state) => state.chats.activeChatId !== null)
 
   useEffect(() => {
     if (!isAuthorized) return
@@ -69,7 +70,7 @@ function App() {
   }
 
   return (
-    <Layout sidebar={<Sidebar />}>
+    <Layout sidebar={<Sidebar />} chatOpen={hasActiveChat}>
       <ChatWindow />
     </Layout>
   )
